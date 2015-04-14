@@ -54,7 +54,7 @@ package services
 			// failover = true;
 			// use a local XML
 			// try again only if timed out, otherwise display error
-			if ( failCount > 3 /*|| event.statusCode == 500*/ )
+			if ( failCount > 3 || event.statusCode == 500 )
 			{
 				var myXML:XML = <alerts time="1344615201440" message=""></alerts>;
 				failCount = 0;
@@ -76,7 +76,7 @@ package services
 		
 		private function handleAlertDataResult( event:ResultEvent ):void
 		{
-			trace( event.statusCode );
+			trace( "[AlertService.as] Event Status Code:" + event.statusCode );
 			failCount = 0;
 			alerts = event.result as XML;			
 			processAlerts();

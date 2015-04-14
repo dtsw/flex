@@ -34,6 +34,9 @@
 			[Bindable]
 			public var playlist:Array;
 			
+			[Bindable]
+			public var columnCount:Number = 6;
+			
 			public var sndPlay:SoundPlayer;
 
  			private function changedToSickHandler( e:Event ):void
@@ -119,12 +122,13 @@
 				bubbleGroup.addEventListener("stateChangedToHealthy", changedToHealthHandler);
 				currentState = 'noEnvironment';
 			}
-
+			
 		]]>
 	</fx:Script>
 	<s:states>
 		<s:State name="MainState"/>
 		<s:State name="noEnvironment"/>
+		<s:State name="configuration"/>
 	</s:states>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
@@ -134,11 +138,13 @@
 				 dataProvider="{groupCollection}" >
 		<s:layout>
 			<!--<layout:RandomLayout/>-->
-			<s:TileLayout requestedColumnCount="6" verticalGap="35" horizontalGap="20"/>
+			<s:TileLayout requestedColumnCount="{columnCountStepper.value}" verticalGap="35" horizontalGap="20"/>
 		</s:layout>
 	</s:DataGroup>
 
 	<s:Label includeIn="noEnvironment" left="54" top="59" fontSize="24"
 			 text="Please select an Environment from the menu"/>
-
+	
+	<s:NumericStepper includeIn="noEnvironment" id="columnCountStepper" value="{columnCount}"></s:NumericStepper>
+	
 </s:Group>

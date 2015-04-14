@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
-			   xmlns:s="library://ns.adobe.com/flex/spark" 
-			   xmlns:mx="library://ns.adobe.com/flex/mx" 
-			   creationComplete="initApp()" 
-			   xmlns:local="*" 
-			   xmlns:services="services.*" 
-			   xmlns:views="views.*" 
-			   xmlns:layout="layout.*" mouseMove="onMouseMove(event)" >
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:local="*"
+		 xmlns:services="services.*"
+		 xmlns:views="views.*"
+		 xmlns:layout="layout.*"
+		 creationComplete="initApp()"
+		 mouseMove="onMouseMove(event)">
 
 <!--	<fx:Style>
 		@namespace local "*";
 		global
 		{
-			content-background-color: #ececec;
+			content-background-color: #000000;
 		}
 	</fx:Style>
 -->
@@ -62,12 +63,12 @@
 			public function onMouseMove(event:MouseEvent):void {
 				//whenever the mouse moves over the application, show the
 				// toolbar and restart the timer restart the timer
-				if ( ! toolbarVisible && event.stageY < 50) 
+				if ( ! toolbarVisible && event.stageY < 100) 
 				{
 					toolbarVisible = true;
 					
 				}
-				if ( toolbarVisible && event.stageY > 50) 
+				if ( toolbarVisible && event.stageY > 99) 
 				{
 					toolbarVisible = false;
 					
@@ -108,8 +109,8 @@
 			
 			protected function startHideTimer():void
 			{	
-				// setup Timer to hide toolbar
-				hideTimer = new Timer( 1000 * 20, 0 );
+				// setup Timer every 30 seconds, to get new alerts
+				hideTimer = new Timer( 1000 * 30, 0 );
 				hideTimer.addEventListener( TimerEvent.TIMER, hideToolbar );
 				hideTimer.start();
 			}
@@ -236,7 +237,7 @@
 			<s:CheckBox selected="{failover}" enabled="false" toolTip="checked, if the failover host is used" />
 			-->		
 			<s:Label id="infoMessage" fontSize="32" color="#0000ff" />
-			<s:Label  text="Version NG 1.5.1" textAlign="left"/>
+			<s:Label  text="Version NG 1.5.2" textAlign="left"/>
 
 		</s:HGroup>
 	</s:HGroup>

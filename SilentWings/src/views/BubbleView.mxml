@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:components="components.*"
+		 xmlns:local="*"
+		 xmlns:layout="layout.*"
+		 creationComplete="group1_creationCompleteHandler(event)"
+		 currentState="MainState">
+	<fx:Script>
+		<![CDATA[
+			import components.BubbleItem;
+			
+			import model.MixedGroup;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			
+			import services.SoundPlayer;
+			
+			[Bindable]
+			public var groupCollection:ArrayCollection;
+			
+			[Bindable]
+			public var sickPlayed:Boolean;
+
+			[Bindable]
+			public var healthPlayed:Boolean;
+
+			[Bindable]
+			public var environment:String;
+			
+			[Bindable]
+			public var playlist:Array;
+			
+			public var sndPlay:SoundPlayer;
+
+ 			private function changedToSickHandler( e:Event ):void
+			{
+				// A Bubble changed to State Sick
+				// play only once per alert "round" 
+				if ( ! sickPlayed )
+				{
+					// var snd:EmbeddedSound = new EmbeddedSound();
+					sndPlay.addFile("quack.mp3");
+
+					switch ( environment )
+					{
+						case "p" :
+							sndPlay.addFile("production.mp3");
+							break;
+						case "t1" :
+							sndPlay.addFile("t1.mp3");
+							break;
+						case "t2" :
+							sndPlay.addFile("t2.mp3");
+							break;
+						case "t3" :
+							sndPlay.addFile("t3.mp3");
+							break;
+
+					}
+					
+					sickPlayed = true;
+				}
+				
+				sndPlay.addBubbleTitle( e.target.mixedGroup.name );
+				sndPlay.addFile("new_alert.mp3");
+			}
+
+			private function changedToHealthHandler( e:Event ):void
+			{
+				// A Bubble changed to State Sick
+				if ( ! healthPlayed )
+				{
+					// var snd:EmbeddedSound = new EmbeddedSound();
+					sndPlay.addFile("phonenr3.mp3");
+					healthPlayed = true;
+				}
+				
+				sndPlay.addBubbleTitle( e.target.mixedGroup.name );
+			}
+
+			public function storeBubblePosition():void
+			{
+				var so:SharedObject = SharedObject.getLocal("Monitor2");
+				var bi:BubbleItem;
+				var arrayData:Array = new Array;
+				for ( var x:uint=0; x<bubbleGroup.numElements; x++ )
+				{
+					bi = bubbleGroup.getChildAt(x) as BubbleItem;
+					arrayData.push(bi.x, bi.y);
+				}
+				so.data.position = arrayData;
+
+				for (var i:String in so.data)
+				{
+					trace(i + ":\t" + so.data[i]);
+				}
+				Alert.show( bubbleGroup.numElements.toString() + " Bubble positions stored in SharedObject" , 'Info' );
+			}
+
+			public function exportBubblePositions():void
+			{
+				var text:String = new String;
+				var so:SharedObject = SharedObject.getLocal("Monitor2");
+				for (var i:String in so.data)
+				{
+					text += i + ":\t" + so.data[i];
+				}
+				Alert.show( text, 'Bubble Positions' );
+			}
+
+
+			protected function group1_creationCompleteHandler(event:FlexEvent):void
+			{
+				bubbleGroup.addEventListener("stateChangedToSick", changedToSickHandler);
+				bubbleGroup.addEventListener("stateChangedToHealthy", changedToHealthHandler);
+				currentState = 'noEnvironment';
+			}
+
+		]]>
+	</fx:Script>
+	<s:states>
+		<s:State name="MainState"/>
+		<s:State name="noEnvironment"/>
+	</s:states>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:DataGroup includeIn="MainState" id="bubbleGroup" itemRenderer="components.BubbleItem"
+				 dataProvider="{groupCollection}" >
+		<s:layout>
+			<!--<layout:RandomLayout/>-->
+			<s:TileLayout requestedColumnCount="6" verticalGap="35" horizontalGap="20"/>
+		</s:layout>
+	</s:DataGroup>
+
+	<s:Label includeIn="noEnvironment" left="54" top="59" fontSize="24"
+			 text="Please select an Environment from the menu"/>
+
+</s:Group>

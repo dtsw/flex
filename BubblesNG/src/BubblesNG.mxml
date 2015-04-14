@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:local="*"
+					   invoke="windowedapplication1_invokeHandler(event)"
+					   skinClass="skins.MyBackgroundSkin">
+	<fx:Script>
+		<![CDATA[
+			import flash.display.Screen;
+			import flash.display.Sprite;
+			
+			import mx.events.FlexEvent;
+			
+			[Bindable] private var myEnv:String;
+			private var currentDir:File; 
+			private var myXPos:String;
+			private var myYPos:String;
+			
+			protected function windowedapplication1_invokeHandler(event:InvokeEvent):void
+			{
+				// TODO Auto-generated method stub
+				myEnv = event.arguments[0];
+				myXPos = event.arguments[1];
+				myYPos = event.arguments[2];
+				
+				currentDir = event.currentDirectory;
+				if ( myEnv != null )
+				{
+					mainContent.setEnvironment( myEnv );
+				}
+				
+				if ( myXPos != null || myYPos != null )
+				{
+					
+					stage.nativeWindow.x = Number(myXPos);
+					stage.nativeWindow.y = Number(myYPos);
+					stage.nativeWindow.width = 1920;
+					stage.nativeWindow.height = 1080;
+				}
+				
+			}
+
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<local:Monitor2 id="mainContent" />
+</s:WindowedApplication>

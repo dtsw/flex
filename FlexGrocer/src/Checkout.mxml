@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600">
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:Form left="10" top="10">
+		<s:FormHeading label="Customer Information"/>
+		<s:FormItem label="Customer Name">
+			<s:TextInput/>
+		</s:FormItem>
+		<s:FormItem label="Address">
+			<s:TextInput/>
+		</s:FormItem>
+		<s:FormItem label="City">
+			<s:TextInput/>
+		</s:FormItem>
+		<s:FormItem label="State">
+			<s:TextInput/>
+		</s:FormItem>
+		<s:FormItem label="Zip">
+			<s:TextInput/>
+		</s:FormItem>
+		<s:FormItem label="Delivery Date">
+			<mx:DateField/>
+		</s:FormItem>
+		<s:FormItem>
+			<s:Button label="Continue"/>
+		</s:FormItem>
+	</s:Form>
+</s:Application>

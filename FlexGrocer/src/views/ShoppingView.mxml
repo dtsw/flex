@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="components.*">
+	<s:layout>
+		<s:HorizontalLayout/>
+	</s:layout>
+	<fx:Script>
+		<![CDATA[
+			import cart.ShoppingCart;
+			import cart.ShoppingCartItem;
+			
+			import mx.collections.ArrayCollection;
+			
+			import valueObjects.Product;
+			
+			[Bindable]
+			public var shoppingCart:ShoppingCart = new ShoppingCart();
+			
+			[Bindable]
+			public var groceryInventory:ArrayCollection;
+			
+			private function handleViewCartClick( event:MouseEvent ):void {
+				this.currentState="cartView";
+			}
+			
+		]]>
+	</fx:Script>
+	<s:states>
+		<s:State name="State1"/>
+		<s:State name="cartView"/>
+	</s:states>	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:VGroup width="100%" height="100%" width.cartView="0" height.cartView="0" visible.cartView="false">
+		<components:ProductItem id="product1" width="100%" height="100%" shoppingCart="{shoppingCart}"
+								product="{groceryInventory.getItemAt(0) as Product}" />
+	</s:VGroup>
+
+		<s:VGroup id="cartGroup" height="100%"
+				  width.cartView="100%">
+			<s:List id="cartList" dataProvider="{shoppingCart.items}" includeIn="State1"/>
+			<s:Label text="Your Cart Total: $"/>
+			<s:Button includeIn="State1" label="View Cart" click="handleViewCartClick( event )"/>
+			<s:DataGrid id="dgCart" includeIn="cartView" width="100%" requestedRowCount="4">
+				<s:columns>
+					<s:ArrayList>
+						<s:GridColumn dataField="dataField1" headerText="Column 1"></s:GridColumn>
+						<s:GridColumn dataField="dataField2" headerText="Column 2"></s:GridColumn>
+						<s:GridColumn dataField="dataField3" headerText="Column 3"></s:GridColumn>
+					</s:ArrayList>
+				</s:columns>
+				<s:typicalItem>
+					<fx:Object dataField1="Sample Data" dataField2="Sample Data"
+							   dataField3="Sample Data"></fx:Object>
+				</s:typicalItem>
+				<s:ArrayList>
+					<fx:Object dataField1="data1" dataField2="data1" dataField3="data1"></fx:Object>
+					<fx:Object dataField1="data2" dataField2="data2" dataField3="data2"></fx:Object>
+					<fx:Object dataField1="data3" dataField2="data3" dataField3="data3"></fx:Object>
+					<fx:Object dataField1="data4" dataField2="data4" dataField3="data4"></fx:Object>
+				</s:ArrayList>
+			</s:DataGrid>
+			<s:Button includeIn="cartView" label="Continue Shopping" click="this.currentState=''"/>
+		</s:VGroup>
+
+</s:Group>

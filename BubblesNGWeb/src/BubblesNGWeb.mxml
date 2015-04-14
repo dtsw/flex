@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600"
+			   xmlns:local="*"  creationComplete="application1_creationCompleteHandler(event)">
+	<fx:Declarations>
+		<!-- Platzieren Sie nichtvisuelle Elemente (z. B. Dienste, Wertobjekte) hier -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			import mx.core.FlexGlobals;
+			
+			[Bindable] private var myEnv:String;
+			
+			protected function application1_creationCompleteHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				// get flashVars and initialize screen with the env
+				myEnv = FlexGlobals.topLevelApplication.parameters.env;
+				if ( myEnv != null )
+				{
+					mainContent.setEnvironment( myEnv );
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<local:Monitor2 id="mainContent" selectedEnvironment="{myEnv}"/>
+</s:Application>

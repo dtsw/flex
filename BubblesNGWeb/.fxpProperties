@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fxpProperties abbreviated="false" authoringTool="Flex Builder" compiles="true" parentProject="5443eaf3-f330-41ce-b924-6b9b2290f929" projectUUID="5443eaf3-f330-41ce-b924-6b9b2290f929" pureCatalystProject="false" sdkVersion="4.6.0" uuid="0004228e-9d46-46ef-9167-f91f826aae57" version="15">
+  <projects/>
+  <src>
+    <linked isMain="false" location="E:/opt/repo/SilentWings/src" path="/linked-src/src" position="0" uuid="0004228e-9d46-46ef-9167-f91f826aae57"/>
+  </src>
+  <swc>
+    <linked location="sdkPlaceHolder" path="sdkPlaceHolder" position="0" uuid="0004228e-9d46-46ef-9167-f91f826aae57"/>
+    <linked location="C:/Documents and Settings/Frick/Adobe Flash Builder 4.6/BubblesNGWeb/libs" path="/libs" position="1" uuid="2e416e79-4098-41ea-8d18-36f1b296a7d1"/>
+  </swc>
+  <misc/>
+  <theme/>
+  <mxmlFormattingPrefs groupAttributesByState="true" maxLineWidth="100" mxmlAlignAttributes="true" mxmlAttributeOrder="id,userLabel,includeIn,excludeFrom,visible,x,y,z,left,right,top,bottom,width,height,minWidth,minHeight,maxWidth,maxHeight,label" mxmlKeepAttributeValuesOrganized="true"/>
+</fxpProperties>

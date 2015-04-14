@@ -1,0 +1,34 @@
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="false">
+	
+	<fx:Script>
+		<![CDATA[
+			
+			// a circle and a label to list Resources in a Bubble
+			
+			private function getBgColor( data:Object ):uint
+			{
+				if (data.alert == true) 
+				{ 
+					if (data.acknowledged == true) return 0x007fff
+					else return 0xffd700;
+				}
+				else return 0x33ff33;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Graphic top="3">
+		<s:Ellipse width="10" height="10">
+			<s:fill>
+				<s:SolidColor color="{getBgColor(data)}"/>
+			</s:fill>
+		</s:Ellipse>
+	</s:Graphic>
+	
+	<s:Label left="15" top="2" fontSize="16" text="{data.name}" />
+	
+</s:ItemRenderer>

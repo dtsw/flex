@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx">
+	<s:layout>
+		<s:HorizontalLayout/>
+	</s:layout>
+	<s:states>
+		<s:State name="State1"/>
+		<s:State name="expanded"/>
+	</s:states>
+	<fx:Script>
+		<![CDATA[
+			import cart.ShoppingCart;
+			import cart.ShoppingCartItem;
+			
+			import valueObjects.Product;
+			
+			[Bindable]
+			public var product:Product;
+			
+			public var shoppingCart:ShoppingCart;
+			
+			private function addToCart( product:Product ):void {
+				var sci:ShoppingCartItem = new ShoppingCartItem( product );
+				shoppingCart.addItem(sci);
+			}
+			
+			protected function removeFromCart( product:Product ):void
+			{
+				var sci:ShoppingCartItem = new ShoppingCartItem( product );
+				shoppingCart.removeItem(sci);
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:VGroup id="products">
+		<s:Label id="prodName" text="{product.prodName}"/>
+		<s:Image scaleMode="zoom" source="assets/{product.imageName}"
+				 mouseOver="this.currentState='expanded'"
+				 mouseOut="this.currentState='State1'"/>
+		<s:Label id="price" text="${product.listPrice}"/>
+		<s:Button id="add" label="AddToCart" click="addToCart( product )"/>
+		<s:Button id="remove" label="Remove From Cart" click="removeFromCart( product )"/>
+	</s:VGroup>
+	
+	<s:VGroup includeIn="expanded" width="100%" x="200">
+		<s:RichText width="50%" text="{product.description}"/>
+		<s:Label text="Certified Organic" visible="{product.isOrganic}"/>
+		<s:Label text="Low Fat" visible="{product.isLowFat}"/>
+	</s:VGroup>
+</s:Group>

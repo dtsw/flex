@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" 
+			   creationComplete="initApp()" 
+			   xmlns:local="*" 
+			   xmlns:services="services.*" 
+			   xmlns:views="views.*" 
+			   xmlns:layout="layout.*" mouseMove="onMouseMove(event)" >
+
+<!--	<fx:Style>
+		@namespace local "*";
+		global
+		{
+			content-background-color: #ececec;
+		}
+	</fx:Style>
+-->
+	<fx:Script>
+		<![CDATA[
+			import model.MixedGroup;
+			import model.Resource;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.ArrayList;
+			import mx.controls.Alert;
+			import mx.events.CollectionEvent;
+			import mx.events.IndexChangedEvent;
+			import mx.messaging.events.ChannelEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import services.SoundPlayer;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import util.QueryString;
+			import util.sound.ServerUnavailableSound;
+			
+			[Bindable] public var alertCounter:uint;
+			//[Bindable] public var failover:Boolean = false;
+			
+			public var alertTimerSecs:uint = 30;
+			
+			[Bindable] public var sndPlay:SoundPlayer = new SoundPlayer();
+
+			[Bindable] private var updateTimer:Timer;
+			private var hideTimer:Timer;
+			[Bindable] public var selectedEnvironment:String;
+			
+			[Bindable] private var toolbarVisible:Boolean = true;
+			
+			private var queryString:QueryString;
+			
+			private function initApp():void
+			{
+				// get the groups and resources
+				// dataFeed.send();
+				startHideTimer();
+				
+			}
+
+			public function onMouseMove(event:MouseEvent):void {
+				//whenever the mouse moves over the application, show the
+				// toolbar and restart the timer restart the timer
+				if ( ! toolbarVisible && event.stageY < 50) 
+				{
+					toolbarVisible = true;
+					
+				}
+				if ( toolbarVisible && event.stageY > 50) 
+				{
+					toolbarVisible = false;
+					
+				}
+				
+				//this.appTimer.reset();
+				//this.appTimer.start();
+			}
+			
+			protected function alertDataProcessedHandler():void
+			{
+				// clear error text and set alpha to 1, reset alert count
+				errorText.text = ""; 
+				infoMessage.text = alertService.infoMessage;
+				if (bubbleView.alpha < 1) 
+				{
+					bubbleView.alpha = 1;
+				}
+				//alertCounter = 0;  // reset alert counter
+				
+				// set a timer to retrieve new alerts
+				if ( updateTimer == null ) {
+					startTimer();
+				} else
+				{
+					alertTimerSecs = 30;
+					updateTimer.delay = ( 1000 * alertTimerSecs );
+				}
+			}
+			
+			protected function startTimer():void
+			{	
+				// setup Timer every 30 seconds, to get new alerts
+				updateTimer = new Timer( 1000 * alertTimerSecs, 0 );
+				updateTimer.addEventListener( TimerEvent.TIMER, refreshData );
+				updateTimer.start();
+			}
+			
+			protected function startHideTimer():void
+			{	
+				// setup Timer to hide toolbar
+				hideTimer = new Timer( 1000 * 20, 0 );
+				hideTimer.addEventListener( TimerEvent.TIMER, hideToolbar );
+				hideTimer.start();
+			}
+			
+			protected function refreshData( event:TimerEvent ):void
+			{
+				// nasty, but cheap. Allow playing of a "new" sound
+				bubbleView.sickPlayed = false;
+				bubbleView.healthPlayed = false;
+				
+				// now retrieve newest alerts
+				alertService.send();	
+			}
+			
+			protected function hideToolbar( event:TimerEvent ):void
+			{
+				// hide the upper toolbar, if still visible
+				if ( toolbarVisible ) 
+				{
+					toolbarVisible = false;
+				}
+				hideTimer.stop();
+				
+	
+			}			
+			
+			private function showError( text:String ):void
+			{
+				// show error and lower alpha
+				errorText.text = text;
+				bubbleView.alpha = 0.5;
+				var sound:ServerUnavailableSound = new ServerUnavailableSound();
+				
+				// retry one hour later
+				alertTimerSecs = 3600;
+				 
+				if ( updateTimer == null ) {
+					startTimer();
+				} else
+				{
+					updateTimer.delay = ( 1000 * alertTimerSecs );
+				}
+
+			}
+			
+			private function groupDataLoadedHandler():void
+			{
+				envSelection.enabled = false;
+				envSelection.mouseEnabled = false;
+				alertService.send();
+			}
+			
+			// code for switching to Fullscreen Mode if Button is pressed
+			private var screenState:String = "normal";
+			//
+			private function toggleScreen( event:Event ):void
+			{
+				// TODO Auto-generated method stub
+				if ( stage.displayState == StageDisplayState.NORMAL ) {
+					screenState = StageDisplayState.FULL_SCREEN;
+				}
+				else {
+					screenState = StageDisplayState.NORMAL;
+				}
+				try {
+					stage.displayState = screenState;
+				} catch (any:*) {
+					// ignore Exceptions
+				}
+			}
+			
+			protected function envSelection_changeHandler(event:IndexChangeEvent):void
+			{
+				// TODO Auto-generated method stub
+				selectedEnvironment = event.currentTarget.selectedItem.data;
+				setEnvironment( selectedEnvironment );
+			}
+			
+			public function setEnvironment( envString:String ):void
+			{
+				selectedEnvironment = envString.toLowerCase();
+				bubbleView.currentState = 'MainState';
+				//dataFeed.url = "http://hyperic:8080/BubbleBean/getGroups?env=" + envString ;
+				dataFeed.url = "http://go/shared/util/serverservices/bubblesNG/groups.cfm?env=" + envString ;
+				dataFeed.send();				
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<services:DataService id="dataFeed"  
+							  groupDataLoaded="groupDataLoadedHandler()" 
+							  groupDataLoadError="showError('Data Load Error')" 
+							  />
+		<services:AlertService id="alertService"  
+							   groupCollection="{dataFeed.groupCollection}" 
+							   alertDataProcessed="alertDataProcessedHandler()" 
+							   alertDataLoadError="showError('Alert Data Load Error')" />
+	</fx:Declarations>
+
+	<s:HGroup top="5" left="5" height="25">
+		<s:Label text="{alertService.alertString}" fontSize="32" color="#000000" toolTip="the current  count of alerts"/>
+		<s:Label id="errorText" fontSize="32" color="#ff0000" />
+		
+		<s:HGroup visible="{toolbarVisible}">
+			<mx:Slider id="zoomSlider" minimum="0.2" maximum="2.8" value="1.1" liveDragging="true" toolTip="zoom the screen" />
+			<s:ComboBox id="envSelection" selectedIndex="0" change="envSelection_changeHandler(event)">
+				<s:dataProvider>
+					<s:ArrayList>
+						<fx:Array>
+							<fx:Object label="-- Please select env. --" data=""/>
+							<fx:Object label="Production" data="p"/>
+							<fx:Object label="Test T1" data="t1"/>
+							<fx:Object label="Test T2" data="t2"/>
+							<fx:Object label="Test T3" data="t3"/>
+						</fx:Array>
+					</s:ArrayList>
+				</s:dataProvider>			
+			</s:ComboBox>
+			<s:Button click="toggleScreen(event)" label="Switch Screen" toolTip="Switch to Full Screen or back (you can also use the Escape key to switch back)"/>
+			
+			<!--		<s:Label text="Failover On: "/> <s:Label text="{sndPlay.url}"/>
+			<s:CheckBox selected="{failover}" enabled="false" toolTip="checked, if the failover host is used" />
+			-->		
+			<s:Label id="infoMessage" fontSize="32" color="#0000ff" />
+			<s:Label  text="Version NG 1.5.1" textAlign="left"/>
+
+		</s:HGroup>
+	</s:HGroup>
+	<s:Label id="mousePos"/>
+	<s:Group top="60" left="5" scaleX="{zoomSlider.value}" scaleY="{zoomSlider.value}" >
+		<views:BubbleView id="bubbleView" sndPlay="{sndPlay}" groupCollection="{dataFeed.groupCollection}" environment="{selectedEnvironment}" />		
+	</s:Group>	
+	
+</s:Group>

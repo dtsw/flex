@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:DataRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 xmlns:myfx="myEffects.*"
+		 width="250" height="140" creationComplete="initComponent()" >
+	<s:states>
+		<s:State name="healthy"/>
+		<s:State name="sick"/>
+	</s:states>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<s:BevelFilter id="myBevel" angle="5" knockout="true" type="BitmapFilterType.FULL" />
+		<s:Move3D id="myMove3D" xBy="2" yBy="5" zBy="5" target="{this.bubbleBorder}"
+				  duration="50" autoCenterTransform="true"
+				  repeatCount="24" repeatBehavior="reverse" />
+		<s:GlowFilter  blurX="16" blurY="16" id="glow" color="0xff0000"
+					    strength="5"/>
+		
+		<s:AnimateColor id="reddish1" target="{this.gradient1}" colorFrom="0xf8de63" colorTo="0xff1111" duration="800"
+						repeatCount="20" 
+						repeatBehavior="reverse"
+						/>
+
+		<s:AnimateColor id="reddish2" target="{this.gradient2}" colorFrom="0xe7bc3f" colorTo="0xff1111" duration="800"
+						repeatCount="20" 
+						repeatBehavior="reverse"
+						/>
+
+		<s:AnimateColor id="greenish1" target="{this.gradient1}" colorFrom="0x66ff66" colorTo="0x0000ff" duration="800"
+						repeatCount="20" 
+						repeatBehavior="reverse"
+						/>
+		
+		<s:AnimateColor id="greenish2" target="{this.gradient2}" colorFrom="0x00ff00" colorTo="0x0000ff" duration="800"
+						repeatCount="20" 
+						repeatBehavior="reverse"
+						/>
+
+		<s:AnimateFilter id="myAnimate" target="{this}"
+						 bitmapFilter="{glow}"
+						 duration="600"
+						 repeatCount="18"
+						 repeatBehavior="reverse">
+			<s:SimpleMotionPath property="alpha" valueFrom="0.1" valueTo="1"/>
+		</s:AnimateFilter>
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			
+			import model.MixedGroup;
+			import model.Resource;
+			
+			import mx.collections.ArrayCollection;
+			import mx.utils.object_proxy;
+			
+			[Event(name="stateChangedToSick", type="flash.events.Event")]
+			[Event(name="stateChangedToHealthy", type="flash.events.Event")]
+			[Event(name="bubbleChangedSick", type="flash.events.Event")]
+
+			[Bindable]
+			public var mixedGroup:MixedGroup;
+			
+			//public var timer:Timer = new Timer(4000, 1);
+
+			// initialize last state as healthy, to avoid greenish blinking
+			private var lastState:String = "healthy";
+			
+			private var _resources:ArrayCollection;
+			
+			public function set resources(value:ArrayCollection):void
+			{
+				_resources = new ArrayCollection( value.source );
+				_resources.filterFunction = resourceList_filterFunc;
+				_resources.refresh();
+			}
+			
+			private function resourceList_filterFunc(item:Resource):Boolean
+			{				
+				return ( item.alert );
+			}
+			
+			[Bindable]
+			public function get resources():ArrayCollection
+			{
+				return _resources;
+			}
+			
+			public function greenishPlay():void
+			{
+				greenish1.play();
+				greenish2.play();
+				var e:Event = new Event("stateChangedToHealthy", true, true);
+				this.dispatchEvent(e);
+			}
+			
+			public override function set data(value:Object):void
+			{
+				var e:Event;
+				var evoice:Event;
+				
+				mixedGroup = value as MixedGroup;
+
+				// are our resources different from the new ones?
+				if ( resources != mixedGroup.elements ) {
+					resources = mixedGroup.elements;
+				}
+				
+				// is new state different from old state?
+				if ( mixedGroup.state != lastState ) {
+					currentState = mixedGroup.state;
+
+					// animate if new state is "sick"
+ 					if ( currentState == "sick" ) {
+						//myAnimate.play();
+ 						reddish1.play();
+						reddish2.play();
+						
+						// myMove3D.play();
+
+						// dispatch event to play a sound
+						e = new Event("stateChangedToSick", true, true);
+						this.dispatchEvent(e);
+					}
+
+					if ( currentState == "healthy" ) {
+						//myAnimate.play();
+						greenish1.play();
+						greenish2.play();
+						// myMove3D.play();
+
+						// dispatch event to play a sound
+						e = new Event("stateChangedToHealthy", true, true);
+						this.dispatchEvent(e);
+					}
+
+				}
+				
+				// store the state
+				lastState = mixedGroup.state;
+
+			}
+
+			private function initComponent():void
+			{
+				//addEventListener( MouseEvent.MOUSE_DOWN, mouseDownHandler );
+			}
+			
+			private function mouseUpHandler( event:MouseEvent ):void
+			{
+				//this.stopDrag();
+				//removeEventListener( MouseEvent.MOUSE_UP, mouseUpHandler );
+			}
+			
+			private function mouseDownHandler( event:MouseEvent ):void
+			{
+				//addEventListener( MouseEvent.MOUSE_UP, mouseUpHandler );
+				//this.startDrag();
+			}
+		]]>
+	</fx:Script>
+
+	<!--<mx:Image includeIn="sick" x="-14" y="-125" source="assets/lunapic2.gif" scaleContent="true" width="278" height="1163"/>	
+	<s:Ellipse id="bubbleCircle" width="43" height="43" width.healthy="43" height.healthy="43">
+		<s:fill>
+			<mx:SolidColor color.healthy="0x00ff00" color.sick="0xfb8f04" />
+		</s:fill>
+	</s:Ellipse>
+-->
+	<s:Rect id="bubbleBorder" width="250" height="140">
+		<s:stroke>
+			<s:SolidColorStroke color="0xAA8E5E" weight="4" />
+		</s:stroke>
+		<s:fill>
+			<s:LinearGradient>
+				<s:GradientEntry id="gradient1" color.sick="0xf8de63" color.healthy="0x66ff66" />
+				<s:GradientEntry id="gradient2" color.sick="0xe7bc3f" color.healthy="0x00ff00" />
+			</s:LinearGradient>
+		</s:fill>
+	</s:Rect>
+	<s:Label top="8" left="8" text="{mixedGroup.name}" fontSize="20" fontWeight="bold"/>
+	<s:List id="resourceList" top="35" left="6" right="8" dataProvider="{resources}" width="220" height="100" itemRenderer="renderer.ResourceListItemRenderer" alpha="0.7" />
+	<mx:Image includeIn="sick" x="-32" y="-5"/>
+</s:DataRenderer>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnableComponent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					  xmlns:s="library://ns.adobe.com/flex/spark" 
+					  xmlns:mx="library://ns.adobe.com/flex/mx"
+					  >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Metadata>
+		[SkinState("healthy")]
+		[SkinState("sick")]
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			import model.Resource;
+			
+			import mx.collections.ArrayCollection;
+			override protected function getCurrentSkinState():String
+			{
+				return currentState;
+			}
+			
+			private var _nameLabel:String = "";
+			private var _resources:ArrayCollection;
+			
+			public function set resources(value:ArrayCollection):void
+			{
+				_resources = new ArrayCollection( value.source );
+ 				_resources.filterFunction = resourceList_filterFunc;
+				_resources.refresh();
+			}
+			
+			[Bindable]
+			public function get resources():ArrayCollection
+			{
+				return _resources;
+			}
+
+ 			private function resourceList_filterFunc(item:Resource):Boolean {				
+				return ( item.alert );
+			}
+
+			[Bindable]
+			public function get nameLabel():String {
+				return _nameLabel;
+			}
+			public function set nameLabel(value:String):void {
+				_nameLabel = value;
+				invalidateSkinState();
+			}
+
+		]]>
+	</fx:Script>
+	<s:states>
+		<s:State name="healthy" enterState="invalidateSkinState()" />
+		<s:State name="sick" enterState="invalidateSkinState()" />
+	</s:states>
+
+</s:SkinnableComponent>

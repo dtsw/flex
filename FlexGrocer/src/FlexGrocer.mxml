@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   creationComplete="handleCreationComplete(event)" xmlns:views="views.*" xmlns:services="services.*">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			private function handleCreationComplete( event:FlexEvent ):void {
+				//groceryInventory.description = "Cheese from America's Dairyland";
+				categoryService.send();
+				productService.send();
+			}
+			
+			private function handleViewCartClick( event:MouseEvent ):void {
+				bodyGroup.currentState="cartView";
+			}
+		]]>
+	</fx:Script>
+
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+
+		<services:ProductService id="productService"/>
+		<services:CategoryService id="categoryService" />
+		
+	</fx:Declarations>
+
+	<s:controlBarLayout>
+		<s:BasicLayout/>
+	</s:controlBarLayout>
+	
+	<s:controlBarContent>
+		<s:Button x="5" y="5" label="Flex Grocer"/>
+		<s:Button id="btnCartView" y="10" right="90" label="View Cart"
+				  click="handleViewCartClick( event )"/>
+		<s:Button id="btnCheckout" y="10" right="10" label="Checkout"/>
+		<s:List left="200" height="40" dataProvider="{categoryService.categories}" labelField="name">
+			<s:layout>
+				<s:HorizontalLayout/>
+			</s:layout>
+		</s:List>
+	</s:controlBarContent>
+	<s:Label right="10" bottom="10" text="(c) 2015, FlexGrocer"/>
+	<views:ShoppingView id="bodyGroup" width="100%" height="100%" groceryInventory="{productService.products}"/>
+</s:Application>
